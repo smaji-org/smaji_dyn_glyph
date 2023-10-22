@@ -1,0 +1,10 @@
+(include_subdirs unqualified)
+
+(executable
+  (name dyn_glyph)
+  (public_name dyn-glyph)
+  (libraries god core core_unix.command_unix)
+  (flags (:standard -safe-string))
+  (preprocess (pps ppx_let))
+  )
+
