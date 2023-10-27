@@ -71,7 +71,6 @@ let outline ~unicode ~output_name ~god_dir ~component_dir=
     |> StrokeMap.of_seq
   in
   let god= God.load_file god_dir unicode in
-  let svg= God.outline_of_god ~stroke_glyph god in
-  let data= Glyph_outline.Svg.to_string svg in
+  let data= God.outline_svg_of_god ~stroke_glyph god in
   Core.Out_channel.write_all ~data output_name
 
