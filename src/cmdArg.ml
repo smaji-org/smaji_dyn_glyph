@@ -1,9 +1,19 @@
+(*
+ * cmdArg.ml
+ * -----------
+ * Copyright : (c) 2023 - 2023, smaji.org
+ * Copyright : (c) 2023 - 2023, ZAN DoYe <zandoye@gmail.com>
+ * Licence   : GPL2
+ *
+ * This file is a part of Smaji_dyn_glyph.
+ *)
+
 open Core
 
 let flag_unicode=
   Command.Arg_type.create
     (fun s->
-      try God.code_point_of_string s with Failure _->
+      try Smaji_god.code_point_of_string s with Failure _->
       failwith "please input unicode in hexadecimal foramt and append optional variation with a comma or colon as separator")
 
 let param_unicode=

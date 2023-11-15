@@ -1,0 +1,20 @@
+opam-version: "2.0"
+maintainer: "zandoye@gmail.com"
+authors: [ "ZAN DoYe" ]
+homepage: "https://github.com/smaji-org/smaji_dyn_glyph/"
+bug-reports: "https://github.com/smaji-org/smaji_dyn_glyph/issues"
+license: "MIT"
+dev-repo: "git+https://https://github.com/smaji-org/smaji_dyn_glyph"
+build: [
+  ["dune" "build" "-p" name "-j" jobs]
+]
+depends: [
+  "ocaml" {>= "4.08.1"}
+  "dune" {>= "1.6.0"}
+  "core_unix" {>= "v0.15"}
+  "smaji_god"
+]
+synopsis: "dynamic glyph outline or animation generation tool"
+description: """
+A tool to generate glyph outline or animation dynamically
+"""
