@@ -80,7 +80,7 @@ let animation ~unicode ~output_name ~god_dir ~component_dir=
     |> List.to_seq
     |> StrokeMap.of_seq
   in
-  let god= Smaji_god.load_file god_dir unicode in
+  let god= Smaji_god.load_file ~dir:god_dir unicode in
   let data= Smaji_god.animate_svg_of_god ~stroke_animate god in
   Core.Out_channel.write_all ~data output_name
 
