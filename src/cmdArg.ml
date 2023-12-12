@@ -16,13 +16,34 @@ let flag_unicode=
       try Smaji_god.code_point_of_string s with Failure _->
       failwith "please input unicode in hexadecimal foramt and append optional variation with a comma or colon as separator")
 
+let flag_outline_type=
+  Command.Arg_type.create
+    (fun str->
+      let open Smaji_god in
+      match str with
+      | "svg"-> Outline_svg
+      | "glif"-> Outline_glif
+      | _-> failwith ("unknown outline type: " ^ str))
+
 let param_unicode=
   let open Command.Param in
   flag "--unicode" ~aliases:["-u"] (required flag_unicode) ~doc:"unicode the hexadecimal unicode of the character, optional variation is separated with a comma or colon"
 
-let param_output=
+let param_input_opt=
+  let open Command.Param in
+  flag "--input" ~aliases:["-i"] (optional string) ~doc:"filename input filename"
+
+let param_output_opt=
   let open Command.Param in
   flag "--output" ~aliases:["-o"] (optional string) ~doc:"filename output filename"
+
+let param_input_req=
+  let open Command.Param in
+  flag "--input" ~aliases:["-i"] (required string) ~doc:"filename input filename"
+
+let param_output_req=
+  let open Command.Param in
+  flag "--output" ~aliases:["-o"] (required string) ~doc:"filename output filename"
 
 let param_gods=
   let open Command.Param in
@@ -32,13 +53,21 @@ let param_components=
   let open Command.Param in
   flag "--component-dir" ~aliases:["-c"] (optional string) ~doc:"path the path of the direcotry containing glyph components"
 
+let param_source_type=
+  let open Command.Param in
+  flag "--source-type" ~aliases:["--st"] (required flag_outline_type) ~doc:"type convert from this type"
+
+let param_target_type=
+  let open Command.Param in
+  flag "--target-type" ~aliases:["--tt"] (required flag_outline_type) ~doc:"type convert to this type"
+
 let command_outline outline=
   Command.basic
     ~summary:"generate an outline file of the character"
     ?readme:None
     (let open Command.Let_syntax in
     let%map unicode= param_unicode
-    and output_name= param_output
+    and output_name= param_output_opt
     and god_dir= param_gods
     and component_dir= param_components in
     fun ()->
@@ -59,7 +88,7 @@ let command_animation animation=
     ?readme:None
     (let open Command.Let_syntax in
     let%map unicode= param_unicode
-    and output_name= param_output
+    and output_name= param_output_opt
     and god_dir= param_gods
     and component_dir= param_components in
     fun ()->
@@ -74,13 +103,30 @@ let command_animation animation=
         ~god_dir
         ~component_dir)
 
-let command ~outline ~animation=
+let command_convert convert=
+  Command.basic
+    ~summary:"convert the format of outline files"
+    ?readme:None
+    (let open Command.Let_syntax in
+    let%map source_type= param_source_type
+    and target_type= param_target_type
+    and input_name= param_input_req
+    and output_name= param_output_req in
+    fun ()->
+      convert
+        ~input_name
+        ~output_name
+        ~source_type
+        ~target_type)
+
+let command ~outline ~animation ~convert=
   Command.group
     ~summary:"Manipulate dates"
     [ "outline", command_outline outline;
       "animation", command_animation animation;
+      "convert", command_convert convert;
       ]
 
-let run ~outline ~animation= Command_unix.run ~version:"0.1"
-  (command ~outline ~animation)
+let run ~outline ~animation ~convert= Command_unix.run ~version:"0.1"
+  (command ~outline ~animation ~convert)
 
