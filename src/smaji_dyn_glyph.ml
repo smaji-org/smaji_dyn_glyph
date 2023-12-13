@@ -12,5 +12,5 @@ let ()=
   let open Outline in
   let open Animation in
   let open Convert in
-  CmdArg.run ~outline ~animation ~convert
+  CmdArg.run ~outline_svg ~outline_glif ~animation ~convert
 

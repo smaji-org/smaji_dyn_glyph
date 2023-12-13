@@ -61,9 +61,9 @@ let param_target_type=
   let open Command.Param in
   flag "--target-type" ~aliases:["--tt"] (required flag_outline_type) ~doc:"type convert to this type"
 
-let command_outline outline=
+let command_outline_svg outline=
   Command.basic
-    ~summary:"generate an outline file of the character"
+    ~summary:"generate an svg outline file of the character"
     ?readme:None
     (let open Command.Let_syntax in
     let%map unicode= param_unicode
@@ -75,7 +75,24 @@ let command_outline outline=
         ~default:(fun ()->
           let core, variation= unicode in
           sprintf "%x,%x.outline.svg" core variation)
-        and component_dir= Option.value component_dir ~default:"outlines" in
+      and component_dir= Option.value component_dir ~default:"outlines" in
+      outline
+        ~unicode
+        ~output_name
+        ~god_dir
+        ~component_dir)
+
+let command_outline_glif outline=
+  Command.basic
+    ~summary:"generate a glif outline file of the character"
+    ?readme:None
+    (let open Command.Let_syntax in
+    let%map unicode= param_unicode
+    and output_name= param_output_opt
+    and god_dir= param_gods
+    and component_dir= param_components in
+    fun ()->
+      let component_dir= Option.value component_dir ~default:"outlines" in
       outline
         ~unicode
         ~output_name
@@ -119,14 +136,21 @@ let command_convert convert=
         ~source_type
         ~target_type)
 
-let command ~outline ~animation ~convert=
+let command_group_outline ~outline_svg ~outline_glif=
+  Command.group
+    ~summary:"outline generation"
+    [ "svg", command_outline_svg outline_svg;
+      "glif", command_outline_glif outline_glif;
+      ]
+
+let command ~outline_svg ~outline_glif ~animation ~convert=
   Command.group
     ~summary:"Manipulate dates"
-    [ "outline", command_outline outline;
+    [ "outline", command_group_outline ~outline_svg ~outline_glif;
       "animation", command_animation animation;
       "convert", command_convert convert;
       ]
 
-let run ~outline ~animation ~convert= Command_unix.run ~version:"0.1"
-  (command ~outline ~animation ~convert)
+let run ~outline_svg ~outline_glif ~animation ~convert= Command_unix.run ~version:"0.1"
+  (command ~outline_svg ~outline_glif ~animation ~convert)
 
