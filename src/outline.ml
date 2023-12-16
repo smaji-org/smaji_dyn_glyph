@@ -11,31 +11,44 @@
 let outline_svg ~unicode ~output_name ~god_dir ~component_dir=
   let open Smaji_god in
   let stroke_glyph= load_glyphs ~dir:component_dir in
-  let god= Smaji_god.load_file ~dir:god_dir unicode in
+  let god=
+    match unicode with
+    | Some unicode-> Smaji_god.load_file ~dir:god_dir unicode
+    | None-> (In_channel.input_all stdin) |> Smaji_god.of_string ~dir:god_dir
+  in
   let data= Smaji_god.outline_svg_of_god ~stroke_glyph god in
-  Core.Out_channel.write_all ~data output_name
+  match output_name with
+  | Some output_name->
+    Core.Out_channel.write_all ~data output_name
+  | None-> Core.Out_channel.print_string data
 
 let outline_glif ~unicode ~output_name ~god_dir ~component_dir=
   let open Smaji_god in
-  let open Printf in
   let stroke_glyph= load_glyphs ~dir:component_dir |> convert_to_glif_glyphs in
-  let god= Smaji_god.load_file ~dir:god_dir unicode in
-  let data= Smaji_god.outline_glif_of_god ~stroke_glyph god in
-  let output_basename= Core.Option.value_or_thunk output_name
-      ~default:(fun ()->
-        let core, variation= unicode in
-        sprintf "%x,%x" core variation)
+  let god=
+    match unicode with
+    | Some unicode-> Smaji_god.load_file ~dir:god_dir unicode
+    | None-> (In_channel.input_all stdin) |> Smaji_god.of_string ~dir:god_dir
   in
+  let data= Smaji_god.outline_glif_of_god ~stroke_glyph god in
   match data with
   | Glif glif->
     let data= Smaji_glyph_outline.Glif.glif_string_of_t glif in
-    let output_name= output_basename ^ ".outline.glif" in
-    Core.Out_channel.write_all ~data output_name
+    (match output_name with
+    | Some output_name->
+      Core.Out_channel.write_all ~data output_name
+    | None-> Core.Out_channel.print_string data)
   | Wrapped { wrap; content }->
     let data= Smaji_glyph_outline.Glif.glif_string_of_t wrap in
-    let output_name= output_basename ^ ".outline.glif" in
-    Core.Out_channel.write_all ~data output_name;
+    (match output_name with
+    | Some output_name->
+      let output_name= output_name ^ ".outline.glif" in
+      Core.Out_channel.write_all ~data output_name;
+    | None-> Core.Out_channel.print_string data);
     let data= Smaji_glyph_outline.Glif.glif_string_of_t content in
-    let output_name= output_basename ^ ".outline.content.glif" in
-    Core.Out_channel.write_all ~data output_name
+    match output_name with
+    | Some output_name->
+      let output_name= output_name ^ ".outline.content.glif" in
+      Core.Out_channel.write_all ~data output_name
+    | None-> Core.Out_channel.print_string data
 
