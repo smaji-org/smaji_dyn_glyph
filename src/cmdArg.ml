@@ -127,8 +127,8 @@ let command_convert convert=
     (let open Command.Let_syntax in
     let%map source_type= param_source_type
     and target_type= param_target_type
-    and input_name= param_input_req
-    and output_name= param_output_req in
+    and input_name= param_input_opt
+    and output_name= param_output_opt in
     fun ()->
       convert
         ~input_name
