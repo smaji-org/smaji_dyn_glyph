@@ -13,8 +13,9 @@ let convert ~input_name ~output_name ~source_type ~target_type=
     (match output_name with
     | Some output_name->
       Out_channel.with_open_text output_name @@ fun chan->
-      Out_channel.output_string chan glif
-    | None-> Out_channel.(output_string stdout glif))
+      Out_channel.output_string chan glif;
+      Out_channel.output_char chan '\n'
+    | None-> Out_channel.(output_string stdout glif; output_char stdout '\n'))
   | (Outline_glif, Outline_svg)->
     let open Smaji_glyph_outline in
     let content= match input_name with
@@ -26,8 +27,8 @@ let convert ~input_name ~output_name ~source_type ~target_type=
     (match output_name with
     | Some output_name->
       Out_channel.with_open_text output_name @@ fun chan->
-      Out_channel.output_string chan svg
-    | None-> Out_channel.(output_string stdout svg))
+      Out_channel.(output_string chan svg; output_char chan '\n')
+    | None-> Out_channel.(output_string stdout svg; output_char stdout '\n'))
   | (Outline_glif, Outline_glif)
   | (Outline_svg, Outline_svg)->
     let content= match input_name with
@@ -36,6 +37,7 @@ let convert ~input_name ~output_name ~source_type ~target_type=
     in
     match output_name with
     | Some output_name->
-      Out_channel.with_open_text output_name @@ fun chan-> Out_channel.output_string chan content
-    | None-> Out_channel.(output_string stdout content)
+      Out_channel.with_open_text output_name @@ fun chan->
+        Out_channel.(output_string chan content; output_char chan '\n')
+    | None-> Out_channel.(output_string stdout content; output_char stdout '\n')
 

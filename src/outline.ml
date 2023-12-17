@@ -19,8 +19,9 @@ let outline_svg ~unicode ~output_name ~god_dir ~component_dir=
   let data= Smaji_god.outline_svg_of_god ~stroke_glyph god in
   match output_name with
   | Some output_name->
+    let output_name= output_name ^ ".outline.svg" in
     Core.Out_channel.write_all ~data output_name
-  | None-> Core.Out_channel.print_string data
+  | None-> Core.Out_channel.print_endline data
 
 let outline_glif ~unicode ~output_name ~god_dir ~component_dir=
   let open Smaji_god in
@@ -37,18 +38,18 @@ let outline_glif ~unicode ~output_name ~god_dir ~component_dir=
     (match output_name with
     | Some output_name->
       Core.Out_channel.write_all ~data output_name
-    | None-> Core.Out_channel.print_string data)
+    | None-> Core.Out_channel.print_endline data)
   | Wrapped { wrap; content }->
     let data= Smaji_glyph_outline.Glif.glif_string_of_t wrap in
     (match output_name with
     | Some output_name->
-      let output_name= output_name ^ ".outline.glif" in
+      let output_name= output_name ^ ".glif" in
       Core.Out_channel.write_all ~data output_name;
-    | None-> Core.Out_channel.print_string data);
+    | None-> Core.Out_channel.print_endline data);
     let data= Smaji_glyph_outline.Glif.glif_string_of_t content in
     match output_name with
     | Some output_name->
-      let output_name= output_name ^ ".outline.content.glif" in
+      let output_name= output_name ^ ".content.glif" in
       Core.Out_channel.write_all ~data output_name
-    | None-> Core.Out_channel.print_string data
+    | None-> Core.Out_channel.print_endline data
 

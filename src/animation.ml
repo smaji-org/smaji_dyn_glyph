@@ -82,5 +82,6 @@ let animation ~unicode ~output_name ~god_dir ~component_dir=
   in
   let god= Smaji_god.load_file ~dir:god_dir unicode in
   let data= Smaji_god.animate_svg_of_god ~stroke_animate god in
+  let output_name= output_name ^ "animation.svg" in
   Core.Out_channel.write_all ~data output_name
 
