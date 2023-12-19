@@ -104,16 +104,12 @@ let command_animation animation=
     ~summary:"generate an stroke animation file of the character"
     ?readme:None
     (let open Command.Let_syntax in
-    let%map unicode= param_unicode
+    let%map unicode= param_unicode_opt
     and output_name= param_output_opt
     and god_dir= param_gods
     and component_dir= param_components in
     fun ()->
-      let output_name= Option.value_or_thunk output_name
-        ~default:(fun ()->
-          let core, variation= unicode in
-          sprintf "%x,%x.animation.svg" core variation)
-        and component_dir= Option.value component_dir ~default:"animations" in
+      let component_dir= Option.value component_dir ~default:"animations" in
       animation
         ~unicode
         ~output_name

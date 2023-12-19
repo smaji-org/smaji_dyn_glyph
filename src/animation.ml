@@ -80,8 +80,15 @@ let animation ~unicode ~output_name ~god_dir ~component_dir=
     |> List.to_seq
     |> StrokeMap.of_seq
   in
-  let god= Smaji_god.load_file ~dir:god_dir unicode in
+  let god=
+    match unicode with
+    | Some unicode-> Smaji_god.load_file ~dir:god_dir unicode
+    | None-> (In_channel.input_all stdin) |> Smaji_god.of_string ~dir:god_dir
+  in
   let data= Smaji_god.animate_svg_of_god ~stroke_animate god in
-  let output_name= output_name ^ "animation.svg" in
-  Core.Out_channel.write_all ~data output_name
+  match output_name with
+  | Some output_name->
+    let output_name= output_name ^ ".animation.svg" in
+    Core.Out_channel.write_all ~data output_name
+  | None-> Core.Out_channel.print_endline data
 
