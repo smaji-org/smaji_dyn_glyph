@@ -1,0 +1,129 @@
+= Smaji_dyn_glyph
+
+Smaji_dyn_glyph is an open source, versatile processor for parsing, generating and converting glyph files.
+
+1. convert between svg(used in font editor) and glif(used in Unified Font Object) files
+2. generate glyph outline from god files
+3. generate glyph animation from god files
+
+== Installation
+
+[source,]
+opam install smaji_dyn_glyph
+
+== Usage
+
+=== Converting
+
+[source,]
+----
+convert the format of outline files
+
+  smaji_dyn_glyph convert 
+
+=== flags ===
+
+  --source-type type, --st   . convert from the type. available types: svg, glif
+  --target-type type, --tt   . convert to the type. available types: svg, glif
+  [--input filename], -i     . input filename, default to stdin
+  [--output filename], -o    . output filename, default to stdout
+  [-help], -?                . print this help text and exit
+----
+
+=== Glyph generating
+
+To generate glyph outline or animation files, smaji_dyn_glyph needs two directories containing stroke or animation components respectively. And if the god file being processed references any other god files as components, a directory containing god files is also required.
+
+https://github.com/smaji-org/smaji_dyn_glyph_sample[smaji_dyn_glyph_sample] is such a sample containing both components and gods files. The directories in this repository can be used in the commands as follows.
+
+Suppose that smaji_dyn_glyph_sample has already been checked out in current directory, then
+
+[source,]
+smaji_dyn_glyph outline glif \
+    --god-dir smaji_dyn_glyph_sample/components/gods \
+    --component-dir smaji_dyn_glyph_sample/components/outlines
+
+will read the god file from `stdin` and output the glif file to `stdout`,
+
+[source,]
+smaji_dyn_glyph animation \
+    --unicode 4e15,0 \
+    --output 4e15,0.animation.svg \
+    --god-dir smaji_dyn_glyph_sample/components/gods \
+    --component-dir smaji_dyn_glyph_sample/components/outlines
+
+will read the god file from `smaji_dyn_glyph_sample/components/gods/4e15/0/default.xml` and output the svg animation file to `4e15,0.animation.svg`.
+
+==== Glyph outline
+
+* Generate an svg file
++
+--
+[source,]
+----
+generate an svg outline file of the character
+
+  smaji_dyn_glyph outline svg 
+
+=== flags ===
+
+  [--component-dir path], -c . the path of the direcotry containing outline
+                               components, default to 'outlines'
+  [--god-dir path], -g       . the path of the direcotry containing god files,
+                               default to 'gods'
+  [--output filename], -o    . output filename, default to stdout
+  [--unicode unicode], -u    . the hexadecimal unicode of the character,
+                               optional variation is separated with a comma or
+                               colon. if ommited, stdin is taken as the god file
+  [-help], -?                . print this help text and exit
+----
+--
++
+
+
+* Generate a glif file
++
+--
+[source,]
+----
+generate a glif outline file of the character
+
+  smaji_dyn_glyph outline glif 
+
+=== flags ===
+
+  [--component-dir path], -c . the path of the direcotry containing outline
+                               components, default to 'outlines'
+  [--god-dir path], -g       . the path of the direcotry containing god files,
+                               default to 'gods'
+  [--output filename], -o    . output filename, default to stdout
+  [--unicode unicode], -u    . the hexadecimal unicode of the character,
+                               optional variation is separated with a comma or
+                               colon. if ommited, stdin is taken as the god file
+  [-help], -?                . print this help text and exit
+----
+--
++
+
+
+==== Glyph animation
+
+[source,]
+----
+generate an stroke animation file of the character
+
+  smaji_dyn_glyph animation 
+
+=== flags ===
+
+  [--component-dir path], -c . the path of the direcotry containing animation
+                               components, default to 'animations'
+  [--god-dir path], -g       . the path of the direcotry containing god files,
+                               default to 'gods'
+  [--output filename], -o    . output filename, default to stdout
+  [--unicode unicode], -u    . the hexadecimal unicode of the character,
+                               optional variation is separated with a comma or
+                               colon. if ommited, stdin is taken as the god file
+  [-help], -?                . print this help text and exit
+----
+
