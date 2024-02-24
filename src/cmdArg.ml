@@ -25,21 +25,17 @@ let flag_outline_type=
       | "glif"-> Outline_glif
       | _-> failwith ("unknown outline type: " ^ str))
 
-let param_unicode=
-  let open Command.Param in
-  flag "--unicode" ~aliases:["-u"] (required flag_unicode) ~doc:"unicode the hexadecimal unicode of the character, optional variation is separated with a comma or colon"
-
 let param_unicode_opt=
   let open Command.Param in
-  flag "--unicode" ~aliases:["-u"] (optional flag_unicode) ~doc:"unicode the hexadecimal unicode of the character, optional variation is separated with a comma or colon"
+  flag "--unicode" ~aliases:["-u"] (optional flag_unicode) ~doc:"unicode the hexadecimal unicode of the character, optional variation is separated with a comma or colon. if ommited, stdin is taken as the god file"
 
 let param_input_opt=
   let open Command.Param in
-  flag "--input" ~aliases:["-i"] (optional string) ~doc:"filename input filename"
+  flag "--input" ~aliases:["-i"] (optional string) ~doc:"filename input filename, default to stdin"
 
 let param_output_opt=
   let open Command.Param in
-  flag "--output" ~aliases:["-o"] (optional string) ~doc:"filename output filename"
+  flag "--output" ~aliases:["-o"] (optional string) ~doc:"filename output filename, default to stdout"
 
 let param_input_req=
   let open Command.Param in
@@ -51,19 +47,23 @@ let param_output_req=
 
 let param_gods=
   let open Command.Param in
-  flag "--god-dir" ~aliases:["-g"] (optional_with_default "gods" string) ~doc:"path the path of the direcotry containing god files"
+  flag "--god-dir" ~aliases:["-g"] (optional_with_default "gods" string) ~doc:"path the path of the direcotry containing god files, default to 'gods'"
 
-let param_components=
+let param_components_outline=
   let open Command.Param in
-  flag "--component-dir" ~aliases:["-c"] (optional string) ~doc:"path the path of the direcotry containing glyph components"
+  flag "--component-dir" ~aliases:["-c"] (optional_with_default "outlines" string) ~doc:"path the path of the direcotry containing outline components, default to 'outlines'"
+
+let param_components_animations=
+  let open Command.Param in
+  flag "--component-dir" ~aliases:["-c"] (optional_with_default "animations" string) ~doc:"path the path of the direcotry containing animation components, default to 'animations'"
 
 let param_source_type=
   let open Command.Param in
-  flag "--source-type" ~aliases:["--st"] (required flag_outline_type) ~doc:"type convert from this type"
+  flag "--source-type" ~aliases:["--st"] (required flag_outline_type) ~doc:"type convert from the type. available types: svg, glif"
 
 let param_target_type=
   let open Command.Param in
-  flag "--target-type" ~aliases:["--tt"] (required flag_outline_type) ~doc:"type convert to this type"
+  flag "--target-type" ~aliases:["--tt"] (required flag_outline_type) ~doc:"type convert to the type. available types: svg, glif"
 
 let command_outline_svg outline=
   Command.basic
@@ -73,9 +73,8 @@ let command_outline_svg outline=
     let%map unicode= param_unicode_opt
     and output_name= param_output_opt
     and god_dir= param_gods
-    and component_dir= param_components in
+    and component_dir= param_components_outline in
     fun ()->
-      let component_dir= Option.value component_dir ~default:"outlines" in
       outline
         ~unicode
         ~output_name
@@ -90,9 +89,8 @@ let command_outline_glif outline=
     let%map unicode= param_unicode_opt
     and output_name= param_output_opt
     and god_dir= param_gods
-    and component_dir= param_components in
+    and component_dir= param_components_outline in
     fun ()->
-      let component_dir= Option.value component_dir ~default:"outlines" in
       outline
         ~unicode
         ~output_name
@@ -107,9 +105,8 @@ let command_animation animation=
     let%map unicode= param_unicode_opt
     and output_name= param_output_opt
     and god_dir= param_gods
-    and component_dir= param_components in
+    and component_dir= param_components_animations in
     fun ()->
-      let component_dir= Option.value component_dir ~default:"animations" in
       animation
         ~unicode
         ~output_name
