@@ -15,6 +15,8 @@ opam install smaji_dyn_glyph
 
 === Converting
 
+Due to the design of glif file that it cannot embed other glif inside, but only references others, complicated svg files, e.g. svg files contain `<g/>` container, cannot be converted to glif file directly.
+
 [source,]
 ----
 convert the format of outline files
@@ -84,6 +86,13 @@ generate an svg outline file of the character
 * Generate a glif file
 +
 --
+
+      MirrorHorizontal
+      MirrorVertical
+      Rotate180
+
+Also due to the design of glif file that it cannot embed other glif inside, but only references others, for each transformed glyph, horizontally mirrored, vertically mirrored or rotated, two glif files are generated, one is the content, another is the wrap used to transform the content. Hence the output file name is also forced to be `<user specified output name>.glif` and `<user specified ouput name>_content.glif` respectively. And if the output file is `stdin`, the wrap and the content are output to `stdin` one after another.
+
 [source,]
 ----
 generate a glif outline file of the character
