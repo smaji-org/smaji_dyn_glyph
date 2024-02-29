@@ -136,3 +136,9 @@ generate an stroke animation file of the character
   [-help], -?                . print this help text and exit
 ----
 
+== Related projects
+
+https://github.com/smaji-org/smaji_god[smaji_god], a Glyph Outline Description (god) manipulation library.
+
+https://github.com/smaji-org/smaji_dyn_glyph_sample[smaji_dyn_glyph_sample] a sample repository containing both components and gods files.
+
