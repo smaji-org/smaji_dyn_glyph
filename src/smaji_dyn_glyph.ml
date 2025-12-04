@@ -9,8 +9,9 @@
  *)
 
 let ()=
-  let open Outline in
+  let open Outline_god in
+  let open Outline_gsd in
   let open Animation in
   let open Convert in
-  CmdArg.run ~outline_svg ~outline_glif ~animation ~convert
+  CmdArg.run ~god_svg ~god_glif ~gsd_svg ~gsd_glif ~animation ~convert
 

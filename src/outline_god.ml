@@ -8,7 +8,7 @@
  * This file is a part of Smaji_dyn_glyph.
  *)
 
-let outline_svg ~unicode ~output_name ~god_dir ~component_dir=
+let god_svg ~unicode ~output_name ~god_dir ~component_dir=
   let open Smaji_god in
   let stroke_glyph= load_glyphs ~dir:component_dir in
   let god=
@@ -22,7 +22,7 @@ let outline_svg ~unicode ~output_name ~god_dir ~component_dir=
     Core.Out_channel.write_all ~data output_name
   | None-> Core.Out_channel.print_endline data
 
-let outline_glif ~unicode ~output_name ~god_dir ~component_dir=
+let god_glif ~unicode ~output_name ~god_dir ~component_dir=
   let open Smaji_god in
   let stroke_glyph= load_glyphs ~dir:component_dir |> convert_to_glif_glyphs in
   let god=

@@ -49,6 +49,10 @@ let param_gods=
   let open Command.Param in
   flag "--god-dir" ~aliases:["-g"] (optional_with_default "gods" string) ~doc:"path the path of the direcotry containing god files, default to 'gods'"
 
+let param_gsds=
+  let open Command.Param in
+  flag "--gsd-dir" ~aliases:["-g"] (optional_with_default "gsds" string) ~doc:"path the path of the direcotry containing gsd files, default to 'gsds'"
+
 let param_components_outline=
   let open Command.Param in
   flag "--component-dir" ~aliases:["-c"] (optional_with_default "outlines" string) ~doc:"path the path of the direcotry containing outline components, default to 'outlines'"
@@ -65,7 +69,15 @@ let param_target_type=
   let open Command.Param in
   flag "--target-type" ~aliases:["--tt"] (required flag_outline_type) ~doc:"type convert to the type. available types: svg, glif"
 
-let command_outline_svg outline=
+let param_padding=
+  let open Command.Param in
+  flag "--padding" ~aliases:["-p"] (optional float) ~doc:"padding the space between an element's content and its border"
+
+let param_weight=
+  let open Command.Param in
+  flag "--weight" ~aliases:["-w"] (optional string) ~doc:"weight the weight of the stroke"
+
+let command_god_outline_svg outline=
   Command.basic
     ~summary:"generate an svg outline file of the character"
     ?readme:None
@@ -81,7 +93,7 @@ let command_outline_svg outline=
         ~god_dir
         ~component_dir)
 
-let command_outline_glif outline=
+let command_god_outline_glif outline=
   Command.basic
     ~summary:"generate a glif outline file of the character"
     ?readme:None
@@ -97,7 +109,41 @@ let command_outline_glif outline=
         ~god_dir
         ~component_dir)
 
-let command_animation animation=
+let command_gsd_outline_svg gsd=
+  Command.basic
+    ~summary:"generate an svg outline file of the character"
+    ?readme:None
+    (let open Command.Let_syntax in
+    let%map unicode= param_unicode_opt
+    and output_name= param_output_opt
+    and gsd_dir= param_gsds
+    and padding= param_padding
+    and weight= param_weight in
+    gsd
+      ?padding
+      ?weight
+      ~unicode
+      ~output_name
+      ~gsd_dir)
+
+let command_gsd_outline_glif gsd=
+  Command.basic
+    ~summary:"generate a glif outline file of the character"
+    ?readme:None
+    (let open Command.Let_syntax in
+    let%map unicode= param_unicode_opt
+    and output_name= param_output_opt
+    and gsd_dir= param_gsds
+    and padding= param_padding
+    and weight= param_weight in
+    gsd
+      ?padding
+      ?weight
+      ~unicode
+      ~output_name
+      ~gsd_dir)
+
+let command_god_animation animation=
   Command.basic
     ~summary:"generate an stroke animation file of the character"
     ?readme:None
@@ -129,21 +175,30 @@ let command_convert convert=
         ~source_type
         ~target_type)
 
-let command_group_outline ~outline_svg ~outline_glif=
+let command_group_god ~god_svg ~god_glif=
   Command.group
     ~summary:"outline generation"
-    [ "svg", command_outline_svg outline_svg;
-      "glif", command_outline_glif outline_glif;
+    [ "svg", command_god_outline_svg god_svg;
+      "glif", command_god_outline_glif god_glif;
       ]
 
-let command ~outline_svg ~outline_glif ~animation ~convert=
+let command_group_gsd ~gsd_svg ~gsd_glif=
+  Command.group
+    ~summary:"outline generation"
+    [ "svg", command_gsd_outline_svg gsd_svg;
+      "glif", command_gsd_outline_glif gsd_glif;
+      ]
+
+let command ~god_svg ~god_glif ~gsd_svg ~gsd_glif ~animation ~convert=
   Command.group
     ~summary:"Manipulate dates"
-    [ "outline", command_group_outline ~outline_svg ~outline_glif;
-      "animation", command_animation animation;
+    [
+      "god", command_group_god ~god_svg ~god_glif;
+      "gsd", command_group_gsd ~gsd_svg ~gsd_glif;
+      "animation", command_god_animation animation;
       "convert", command_convert convert;
       ]
 
-let run ~outline_svg ~outline_glif ~animation ~convert= Command_unix.run ~version:"0.1"
-  (command ~outline_svg ~outline_glif ~animation ~convert)
+let run ~god_svg ~god_glif ~gsd_svg ~gsd_glif ~animation ~convert= Command_unix.run ~version:"0.1"
+  (command ~god_svg ~god_glif ~gsd_svg ~gsd_glif ~animation ~convert)
 

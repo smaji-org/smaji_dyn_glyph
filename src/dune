@@ -3,8 +3,8 @@
 (executable
   (name smaji_dyn_glyph)
   (public_name smaji_dyn_glyph)
-  (libraries smaji_god core core_unix.command_unix)
+  (libraries smaji_god smaji_gsd core core_unix.command_unix)
   (flags (:standard -safe-string))
-  (preprocess (pps ppx_let))
+  (preprocess (pps ppx_let ppx_pipebang))
   )
 
