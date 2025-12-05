@@ -133,12 +133,8 @@ let command_gsd_outline_glif gsd=
     (let open Command.Let_syntax in
     let%map unicode= param_unicode_opt
     and output_name= param_output_opt
-    and gsd_dir= param_gsds
-    and padding= param_padding
-    and weight= param_weight in
+    and gsd_dir= param_gsds in
     gsd
-      ?padding
-      ?weight
       ~unicode
       ~output_name
       ~gsd_dir)
